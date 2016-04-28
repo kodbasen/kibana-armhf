@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: kibana
+  namespace: default
+  labels:
+    component: elk
+    role: kibana
+spec:
+  replicas: 1
+  selector:
+    component: elk
+    role: kibana
+  template:
+    metadata:
+      labels:
+        component: elk
+        role: kibana
+    spec:
+      serviceAccount: elk
+      containers:
+      - name: kibana
+        image: kodbasen/kibana-armhf:4.5.0
+        env:
+        - name: KIBANA_ES_URL
+          value: "http://elasticsearch.default.svc.cluster.local:9200"
+        - name: KUBERNETES_TRUST_CERT
+          value: "true"
+        ports:
+        - containerPort: 5601
+          name: http
+          protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    serviceloadbalancer/lb.host: "kibana.kodbasen.org"
+  name: kibana
+  namespace: default
+  labels:
+    component: elk
+    role: kibana
+spec:
+  selector:
+    component: elk
+    role: kibana
+  ports:
+  - name: http
+    port: 80
+    targetPort: 5601
+    protocol: TCP
