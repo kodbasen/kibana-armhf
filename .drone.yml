@@ -11,5 +11,5 @@ publish:
     email: lars.mogren@gmail.com
     repo: kodbasen/kibana-armhf
     tag:
-    - "4.5.0"
+    - "4.5.0_1"
     - latest
